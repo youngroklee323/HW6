@@ -1,0 +1,202 @@
+//player
+
+var playerL = 200
+var playerR = 200
+
+// plate
+var plateWidth = 10
+var plateHeight = 80
+var plateSpeed = 5
+var plateAccel = 0.5
+
+
+//ball 
+var ballX = 300
+var ballY = 200
+var ballS = 20
+var ballBounce = 1
+var ballHit = true
+var ballSpeedX = -0
+var ballSpeedY = -0
+var ballAccel = 0.8
+
+
+//score
+var scoreL = 0
+var scoreR = 0
+
+//bounce count
+var bounce = 0;
+var bounceCount = 0;
+
+function preload() {
+  pong = loadSound('ping.wav');
+  back = loadImage('background.jpg');
+  ball = loadImage('ball.png');
+}
+
+function setup() {
+  createCanvas(600, 400);
+}
+
+function draw() {
+  image(back,0,0,width,height);
+  colorMode(HSB);
+  // background(0);
+  fill(255);
+  stroke(255);
+  line(300, 0, 300, height);
+  noStroke();
+
+  //ball
+  image(ball,ballX-ballS/2,ballY-ballS/2,ballS,ballS);
+  
+  // fill(ballX/2,255,100);
+  // ellipse(ballX, ballY, ballS);
+  ballX = ballX + ballSpeedX;
+  ballY = ballY - ballSpeedY;
+  
+  //ball bounce
+  
+//  if( ballX > 300 && ballX < 450){
+//   ballS -= 0.5; 
+//   }
+//   if( ballX < 300 && ballX > 150){
+//   ballS -= 0.5; 
+//   }
+     
+//   if(ballS < 10){
+//     ballBounce = 0;
+//     ballS = 10;
+//   }
+
+  //score board
+  fill(0,0,255);
+  textSize(40);
+  text(scoreR, width - 50, 20, 40);
+  text(scoreL, 30, 20, 40);
+  textSize(20);
+  text('COMBO', 265, 40);
+  text(bounceCount, 265, 60);
+
+
+  //player plate
+  fill(playerL,100,100);
+  rect(0, playerL, plateWidth, plateHeight,50);
+   fill(playerR,100,100);
+  rect(width - plateWidth, playerR, plateWidth,plateHeight,50);
+
+
+  //**GAME LOGIC**//
+
+  //ball bound top & bottom
+  if (ballY < 0) {
+    ballSpeedY = -ballSpeedY;
+    pong.play();
+
+  }
+  if (ballY > height) {
+    ballSpeedY = -ballSpeedY;
+    pong.play();
+
+  }
+
+  //player hits the ball
+
+
+  //player L  
+  if (ballX < plateWidth && ballY > playerL && ballY < playerL + plateHeight) {
+    ballSpeedX = -ballSpeedX + ballAccel;
+    plateSpeed = plateSpeed + plateAccel;
+    pong.play();
+    bounce = bounce + 1;
+
+  }
+
+  //player R
+  if (ballX > width - plateWidth && ballY > playerR && ballY < playerR + plateHeight) {
+    ballSpeedX = -ballSpeedX - ballAccel;
+    plateSpeed = plateSpeed + plateAccel;
+    pong.play();
+    bounce = bounce + 1;
+  }
+
+  //bounce count
+
+  if (bounce === 2) {
+    bounceCount = bounceCount + 1;
+    bounce = 0;
+  }
+
+  //score
+  //ball goes out
+
+
+  if (ballX < -5) {
+    ballX = 300;
+    ballY = 200;
+    scoreR = scoreR + 1;
+    ballSpeedX = 0;
+    ballSpeedY = 0;
+    bounceCount = 0;
+    plateSpeed = 5;
+    ballS = 20;
+
+  }
+  if (ballX > width + 5) {
+    ballX = 300;
+    ballY = 200;
+    scoreL = scoreL + 1;
+    ballSpeedX = 0;
+    ballSpeedY = 0;
+    bounceCount = 0;
+    plateSpeed = 5;
+    ballS = 20;
+  }
+
+
+
+
+  //**User Input**
+  if (keyIsDown(87)) {
+    playerL = playerL - plateSpeed;
+  }
+  if (keyIsDown(83)) {
+    playerL = playerL + plateSpeed;
+  }
+  if (keyIsDown(UP_ARROW)) {
+    playerR = playerR - plateSpeed;
+  }
+  if (keyIsDown(DOWN_ARROW)) {
+    playerR = playerR + plateSpeed;
+  }
+
+  //border
+
+  if (playerL < 0) {
+    playerL = 0
+  }
+  if (playerL > height - plateHeight) {
+    playerL = height - plateHeight;
+  }
+  if (playerR < 0) {
+    playerR = 0
+  }
+  if (playerR > height - plateHeight) {
+    playerR = height - plateHeight;
+  }
+}
+
+function keyTyped() {
+  if (ballX === 300 && ballY === 200) {
+    if (key === ' ') {
+      let ballSpeedrandomXs = [-4, 4];
+      let ballSpeedrandomX = random(ballSpeedrandomXs);
+      ballSpeedX = ballSpeedrandomX;
+      let ballSpeedrandomYs = [-4, 4];
+      let ballSpeedrandomY = random(ballSpeedrandomYs);
+      ballSpeedY = ballSpeedrandomY;
+
+    }
+  }
+}
